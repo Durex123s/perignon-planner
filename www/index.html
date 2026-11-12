@@ -1,0 +1,400 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#07090f">
+<title>PÉRIGNON — Personal Life Planner</title>
+<style>
+/* PÉRIGNON — PERSONAL LIFE PLANNER · style.css */
+:root{--bg:#07090f;--panel:#0e1320;--panel2:#151c2e;--line:#222b40;--tx:#e8eaf0;--mut:#8b94aa;--gold:#d4af37;--red:#e0574f;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.5 "Segoe UI",Roboto,system-ui,sans-serif}
+h1,.brand b{font-family:Georgia,"Times New Roman",serif;font-weight:400;letter-spacing:.04em}
+h1{margin:0;font-size:28px}
+h2{font-size:14px;color:var(--mut);font-weight:600;margin:18px 0 8px}
+h2:first-child{margin-top:0}
+.app{display:grid;grid-template-columns:210px 1fr;min-height:100vh}
+nav{position:sticky;top:0;height:100vh;padding:22px 12px;background:#05070b;border-right:1px solid var(--line);display:flex;flex-direction:column;gap:2px}
+.brand{padding:0 10px 18px}
+.brand b{display:block;color:var(--gold);font-size:22px}
+.brand small{color:var(--mut)}
+nav button{background:none;border:0;color:var(--mut);text-align:left;padding:9px 10px;border-radius:8px;font:inherit;cursor:pointer;display:flex;justify-content:space-between}
+nav button:hover{color:var(--tx);background:var(--panel)}
+nav button.on{color:var(--gold);background:var(--panel)}
+.sign{margin-top:auto;padding:0 10px;font:italic 12px Georgia,serif;color:var(--mut)}
+.badge:not(:empty){background:var(--red);color:#fff;border-radius:99px;padding:0 7px;font-size:12px}
+main{padding:26px;max-width:1100px;width:100%}
+.top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:18px;flex-wrap:wrap}
+.mut,small{color:var(--mut)}
+small{display:block;font-size:12px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:14px}
+.grid5{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:14px}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.pil{text-align:left;color:var(--tx);font:inherit;cursor:pointer;border-left:3px solid var(--c);margin:0}
+.pil:hover{background:var(--panel2)}
+.pil b{display:block;font-weight:600}
+.big{display:block;font:28px Georgia,serif;margin:6px 0}
+.bar{display:block;height:5px;background:var(--line);border-radius:9px;overflow:hidden}
+.bar u{display:block;height:100%;background:var(--c,var(--gold));transition:width .4s}
+.btn{background:var(--panel2);color:var(--tx);border:1px solid var(--line);border-radius:8px;padding:8px 14px;font:inherit;cursor:pointer;display:inline-block}
+.btn:hover{border-color:var(--gold)}
+.btn.gold{background:var(--gold);color:#120e00;border-color:var(--gold);font-weight:600}
+.btn.danger{color:var(--red)}
+.btn.on{border-color:var(--gold);color:var(--gold)}
+.acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.task{display:flex;gap:10px;align-items:center;padding:8px 10px;margin-bottom:6px;background:var(--panel2);border-left:3px solid var(--c);border-radius:6px}
+.task.done .tb b{text-decoration:line-through;color:var(--mut)}
+.task.late{outline:1px solid var(--red)}
+.tb{flex:1;cursor:pointer;min-width:0}
+.chk{background:none;border:0;color:var(--c);font-size:20px;cursor:pointer;padding:0}
+.empty{color:var(--mut);font-size:14px;margin:4px 0 10px}
+.frm{display:flex;flex-direction:column;gap:8px}
+.frm label{display:flex;flex-direction:column;gap:3px;color:var(--mut);font-size:13px}
+.row2{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px}
+input,select,textarea{background:var(--bg);color:var(--tx);border:1px solid var(--line);border-radius:8px;padding:9px;font:inherit;width:100%}
+input:focus,select:focus,textarea:focus,button:focus-visible{outline:2px solid var(--gold);outline-offset:1px}
+textarea{min-height:70px}
+.ent{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-top:1px solid var(--line)}
+.ent p{margin:4px 0 0;white-space:pre-wrap}
+.x{background:none;border:0;color:var(--mut);cursor:pointer}
+.x:hover{color:var(--red)}
+.tm{display:grid;grid-template-columns:150px 1fr 60px;gap:10px;align-items:center;margin:8px 0}
+.tm em{font-style:normal;text-align:right;color:var(--mut)}
+.week{display:grid;grid-template-columns:repeat(7,1fr);gap:8px}
+.dcol h3{font-size:13px;color:var(--gold);cursor:pointer;margin:0 0 6px}
+.dcol .task{flex-wrap:wrap}
+.month{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.mc{background:var(--panel2);border:1px solid var(--line);color:var(--tx);border-radius:8px;min-height:62px;padding:6px;text-align:left;cursor:pointer;font:inherit}
+.mc.now{border-color:var(--gold)}
+.chart{display:flex;gap:10px;align-items:flex-end;height:110px;margin:12px 0}
+.chart div{flex:1;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center}
+.chart i{width:70%;background:var(--gold);border-radius:4px 4px 0 0;min-height:2px}
+.chart i.neg{background:var(--red)}
+.mask{position:fixed;inset:0;background:#000a;display:grid;place-items:center;padding:14px;z-index:20}
+.dlg{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:20px;width:min(480px,100%)}
+#toasts{position:fixed;top:14px;right:14px;display:flex;flex-direction:column;gap:8px;z-index:30}
+.toast{background:var(--panel2);border:1px solid var(--gold);padding:10px 14px;border-radius:8px;max-width:320px}
+@media(max-width:860px){
+ .app{display:block}
+ nav{position:fixed;inset:auto 0 0 0;height:auto;flex-direction:row;overflow-x:auto;padding:6px;z-index:10;border-right:0;border-top:1px solid var(--line)}
+ nav button{white-space:nowrap;gap:6px}
+ .brand,.sign{display:none}
+ main{padding:16px 14px 84px}
+ .grid5{grid-template-columns:1fr 1fr}
+ .cols{grid-template-columns:1fr}
+ .week{grid-template-columns:1fr}
+ .tm{grid-template-columns:100px 1fr 54px}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+  <nav>
+    <div class="brand"><b>PÉRIGNON</b><small>Personal Life Planner</small></div>
+    <button data-act="nav" data-v="dash">Accueil<span id="badge" class="badge"></span></button>
+    <button data-act="nav" data-v="plan">Planning</button>
+    <button data-act="nav" data-v="ecole">École</button>
+    <button data-act="nav" data-v="rap">Rap</button>
+    <button data-act="nav" data-v="fin">Finances</button>
+    <button data-act="nav" data-v="bot">AI Trader</button>
+    <button data-act="nav" data-v="perso">Perso</button>
+    <button data-act="nav" data-v="bilan">Bilan</button>
+    <button data-act="nav" data-v="set">Réglages</button>
+    <p class="sign">Discipline. Création. Évolution.</p>
+  </nav>
+  <main id="main"></main>
+</div>
+<div id="modal"></div>
+<div id="toasts"></div>
+<script>
+/* PÉRIGNON — PERSONAL LIFE PLANNER · app.js
+   Données : localStorage via l’objet Store (remplaçable plus tard par un backend). */
+'use strict';
+
+/* ---------- Constantes ---------- */
+const P = {
+  ecole: { n: 'École', c: '#5b8def' }, rap: { n: 'Rap', c: '#b07cf0' },
+  fin: { n: 'Finances', c: '#d4af37' }, bot: { n: 'AI Trader', c: '#3ec9a7' },
+  perso: { n: 'Développement personnel', c: '#e8825a' }
+};
+const TYPES = {
+  ecole: ['Journal de stage', 'Compétence', 'Objectif', 'Bilan', 'Note'],
+  rap: ['Texte', 'Morceau', 'Idée', 'Séance', 'Objectif'],
+  fin: ['Projet', 'Offre', 'Prospect', 'Client', 'Objectif'],
+  bot: ['Tâche dev', 'Bug', 'Test', 'Backtest', 'Compte démo', 'Doc'],
+  perso: ['Habitude', 'Sport', 'Lecture', 'Anglais', 'Journal', 'Bilan']
+};
+const PRIO = ['faible', 'normale', 'élevée', 'urgente'];
+const STAT = { todo: 'À faire', doing: 'En cours', done: 'Terminé' };
+const IC = { todo: '○', doing: '◐', done: '●' };
+const DAYS = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
+const F = { 1: ['fin', 'Finances et business'], 2: ['bot', 'Développement du bot'], 3: ['rap', 'Création musicale'],
+  4: ['fin', 'Finances et prospection'], 5: ['bot', 'Programmation et tests du bot'],
+  6: ['rap', 'Rap et compétences GEII'], 0: ['perso', 'Bilan général et planification'] };
+
+/* ---------- Données ---------- */
+const Store = {
+  key: 'perignon.v1',
+  load() { try { return JSON.parse(localStorage.getItem(this.key)); } catch (e) { return null; } },
+  save(d) { try { localStorage.setItem(this.key, JSON.stringify(d)); } catch (e) { toast('Sauvegarde impossible : stockage plein ou bloqué.'); } }
+};
+let S = { tasks: [], entries: [], money: [], ...(Store.load() || {}) };
+S.settings = { name: 'Pérignon', mode: 'auto', stage: '2027-01-04', goal: 0, ...S.settings };
+const save = () => Store.save(S);
+
+/* ---------- Utilitaires ---------- */
+const $ = s => document.querySelector(s), pad = n => String(n).padStart(2, '0');
+const iso = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+const dt = s => new Date(s + 'T12:00:00');
+const today = () => iso(new Date());
+const nowHM = () => { const d = new Date(); return pad(d.getHours()) + ':' + pad(d.getMinutes()); };
+const addDays = (s, n) => { const d = dt(s); d.setDate(d.getDate() + n); return iso(d); };
+const mon = s => addDays(s, -((dt(s).getDay() + 6) % 7));
+const mins = t => +t.slice(0, 2) * 60 + +t.slice(3);
+const hm = m => Math.floor(m / 60) + 'h' + pad(m % 60);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+const fmtD = s => dt(s).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
+const fmtShort = s => dt(s).toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short' });
+const eur = n => Math.round(n).toLocaleString('fr-FR') + ' FCFA';
+const empty = m => `<p class="empty">${m}</p>`;
+const opts = (a, v) => a.map(o => `<option value="${o[0]}"${o[0] === v ? ' selected' : ''}>${o[1]}</option>`).join('');
+function toast(m) {
+  const t = document.createElement('div'); t.className = 'toast'; t.textContent = m;
+  $('#toasts').append(t); setTimeout(() => t.remove(), 4500);
+}
+
+/* ---------- Tâches et statistiques ---------- */
+const late = t => t.status !== 'done' && (t.date < today() || (t.date === today() && t.end < nowHM()));
+const byTime = (a, b) => (a.date + a.start).localeCompare(b.date + b.start);
+const dayTasks = d => S.tasks.filter(t => t.date === d).sort(byTime);
+const pct = p => { const a = S.tasks.filter(t => t.pillar === p); return a.length ? Math.round(a.filter(t => t.status === 'done').length / a.length * 100) : 0; };
+function range(p) {
+  const t = today(); if (p === 'day') return [t, t];
+  if (p === 'week') { const m = mon(t); return [m, addDays(m, 6)]; }
+  const d = dt(t); return [iso(new Date(d.getFullYear(), d.getMonth(), 1)), iso(new Date(d.getFullYear(), d.getMonth() + 1, 0))];
+}
+function stats(p) {
+  const [a, b] = range(p), ts = S.tasks.filter(t => t.date >= a && t.date <= b), done = ts.filter(t => t.status === 'done');
+  const time = {}; Object.keys(P).forEach(k => time[k] = done.filter(t => t.pillar === k).reduce((s, t) => s + mins(t.end) - mins(t.start), 0));
+  const m = S.money.filter(x => x.date >= a && x.date <= b), sum = ty => m.filter(x => x.type === ty).reduce((s, x) => s + x.amount, 0);
+  const due = ts.filter(t => t.date <= today());
+  return { ts, done, time, rev: sum('revenu'), dep: sum('dépense'), epa: sum('épargne'), late: ts.filter(late).length,
+    disc: due.length ? Math.round(due.filter(t => t.status === 'done').length / due.length * 100) : null };
+}
+
+/* ---------- Modèles d’emploi du temps ---------- */
+const A = [['06:30', '07:00', 'Réveil et toilette', 'perso'], ['07:00', '07:30', 'Sport', 'perso'], ['07:30', '08:00', 'Petit-déjeuner', 'perso'],
+  ['08:00', '10:00', 'Business numérique', 'fin'], ['10:00', '10:30', 'Pause', 'perso'], ['10:30', '12:00', 'Études GEII', 'ecole'],
+  ['12:00', '13:00', 'Repas et repos', 'perso'], ['13:00', '14:30', 'PÉRIGNON AI TRADER', 'bot'], ['14:30', '15:00', 'Pause', 'perso'],
+  ['15:00', '16:00', 'Création musicale', 'rap'], ['16:00', '16:30', 'Anglais', 'perso'], ['16:30', '17:00', 'Lecture', 'perso'],
+  ['17:00', '18:00', 'Temps libre et activité légère', 'perso'], ['18:00', '19:00', 'Douche et repas', 'perso'],
+  ['19:00', '20:00', 'Projet complémentaire', 'fin'], ['20:00', '21:30', 'Vie sociale et détente', 'perso'], ['21:30', '22:00', 'Bilan quotidien', 'perso']];
+const tplA = wd => A.map(r => r[2] === 'Projet complémentaire' ? [r[0], r[1], 'Projet du jour : ' + F[wd][1], F[wd][0]] : r);
+function tplB(wd) {
+  const [p, n] = F[wd], stage = 'Stage Neo Industries';
+  if (wd === 0) return [['09:00', '10:00', 'Bilan hebdomadaire', 'perso'], ['10:00', '11:00', 'Planification de la semaine', 'perso'], ['11:00', '12:00', 'Récupération', 'perso']];
+  if (wd === 6) return [['07:00', '14:00', stage, 'ecole'], ['15:00', '17:00', n, p], ['17:00', '18:00', 'Temps libre', 'perso']];
+  const top = [['07:30', '08:00', 'Sport', 'perso'], ['08:30', '10:30', n, p], ['10:30', '11:00', 'Pause', 'perso']];
+  if (wd === 3) return [...top, ['11:00', '12:00', 'Anglais et lecture', 'perso'], ['12:00', '13:00', 'Repas et repos', 'perso'], ['13:00', '14:00', 'Déplacement', 'perso'], ['14:00', '22:00', stage, 'ecole']];
+  return [...top, ['11:00', '12:00', 'Études GEII', 'ecole'], ['12:00', '13:00', 'Repas et repos', 'perso'], ['13:00', '14:00', 'Anglais et lecture', 'perso'],
+    ['14:00', '15:00', 'Repos', 'perso'], ['15:00', '16:00', 'Déplacement', 'perso'], ['16:00', '22:00', stage, 'ecole']];
+}
+function modeFor(d) {
+  const m = S.settings.mode; if (m !== 'auto') return m;
+  const e = dt(S.settings.stage); e.setMonth(e.getMonth() + 3);
+  return d >= S.settings.stage && d < iso(e) ? 'B' : 'A';
+}
+function applyTpl(d) {
+  const wd = dt(d).getDay(), m = modeFor(d); let n = 0;
+  (m === 'B' ? tplB(wd) : tplA(wd)).forEach(([s, e, t, p]) => {
+    if (!S.tasks.some(x => x.date === d && x.start === s && x.title === t)) {
+      S.tasks.push({ id: uid(), date: d, start: s, end: e, title: t, pillar: p, status: 'todo', prio: 'normale' }); n++;
+    }
+  });
+  save(); toast(`Modèle ${m} appliqué : ${n} tâche(s) ajoutée(s).`);
+}
+
+/* ---------- Vues ---------- */
+const ui = { view: 'dash', date: today(), range: 'day', pillar: null, period: 'week' };
+
+function row(t, wd) {
+  return `<div class="task${late(t) ? ' late' : ''}${t.status === 'done' ? ' done' : ''}" style="--c:${P[t.pillar].c}">
+  <button class="chk" data-act="cycle" data-id="${t.id}" title="Changer le statut">${IC[t.status]}</button>
+  <div class="tb" data-act="edit" data-id="${t.id}"><b>${esc(t.title)}</b><small>${wd ? fmtShort(t.date) + ' · ' : ''}${t.start}–${t.end} · ${P[t.pillar].n} · ${t.prio}</small></div></div>`;
+}
+const timeBars = time => { const mx = Math.max(...Object.values(time));
+  return Object.keys(P).map(k => `<div class="tm"><span>${P[k].n}</span><i class="bar" style="--c:${P[k].c}"><u style="width:${mx ? time[k] / mx * 100 : 0}%"></u></i><em>${hm(time[k])}</em></div>`).join(''); };
+
+function dash() {
+  const d = today(), tt = dayTasks(d), w = stats('week'), lt = S.tasks.filter(late).sort(byTime),
+    nx = S.tasks.filter(t => t.status !== 'done' && (t.date > d || (t.date === d && t.end > nowHM()))).sort(byTime)[0],
+    goal = tt.filter(t => t.prio === 'élevée' || t.prio === 'urgente');
+  return `<header class="top"><div><h1>Bonjour, ${esc(S.settings.name)}</h1><p class="mut">${fmtD(d)} · <span id="clock"></span></p></div>
+  <button class="btn gold" data-act="new">+ Tâche</button></header>
+  <section class="grid5">${Object.keys(P).map(k => `<button class="card pil" style="--c:${P[k].c}" data-act="nav" data-v="${k}"><b>${P[k].n}</b><span class="big">${pct(k)}%</span><i class="bar"><u style="width:${pct(k)}%"></u></i></button>`).join('')}</section>
+  <section class="cols"><div class="card"><h2>Prochaine tâche</h2>${nx ? row(nx, 1) : empty('Aucune tâche à venir.')}
+  <h2>Objectifs du jour (priorité élevée ou urgente)</h2>${goal.map(t => row(t)).join('') || empty('Aucun objectif prioritaire aujourd’hui.')}
+  <h2>En retard (${lt.length})</h2>${lt.slice(0, 5).map(t => row(t, 1)).join('') || empty('Aucun retard.')}</div>
+  <div class="card"><h2>Planning du jour</h2>${tt.map(t => row(t)).join('') || empty('Journée vide.')}
+  <button class="btn" data-act="tpl" data-d="${d}">Appliquer le modèle du jour</button></div></section>
+  <section class="card"><h2>Semaine en cours</h2><p>${w.done.length}/${w.ts.length} tâches terminées · discipline ${w.disc === null ? '—' : w.disc + '%'}</p>${timeBars(w.time)}</section>`;
+}
+
+function plan() {
+  const d = ui.date, r = ui.range; let body = '', title = '';
+  if (r === 'day') { title = fmtD(d); body = (dayTasks(d).map(t => row(t)).join('') || empty('Rien de prévu.')) + `<button class="btn" data-act="tpl" data-d="${d}">Appliquer le modèle du jour</button>`; }
+  if (r === 'week') {
+    const m = mon(d); title = 'Semaine du ' + fmtShort(m);
+    body = '<div class="week">' + [...Array(7)].map((_, i) => { const x = addDays(m, i);
+      return `<div class="dcol"><h3 data-act="goto" data-d="${x}">${DAYS[dt(x).getDay()].slice(0, 3)} ${dt(x).getDate()}</h3>${dayTasks(x).map(t => row(t)).join('')}</div>`; }).join('') + '</div>';
+  }
+  if (r === 'month') {
+    const c = dt(d), y = c.getFullYear(), mo = c.getMonth(), off = (new Date(y, mo, 1).getDay() + 6) % 7, nd = new Date(y, mo + 1, 0).getDate();
+    title = c.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
+    body = '<div class="month">' + ['L', 'M', 'M', 'J', 'V', 'S', 'D'].map(x => `<small>${x}</small>`).join('') + '<span></span>'.repeat(off) +
+      [...Array(nd)].map((_, i) => { const x = iso(new Date(y, mo, i + 1)), ts = dayTasks(x), dn = ts.filter(t => t.status === 'done').length;
+        return `<button class="mc${x === today() ? ' now' : ''}" data-act="goto" data-d="${x}"><b>${i + 1}</b><small>${ts.length ? dn + '/' + ts.length : ''}</small></button>`; }).join('') + '</div>';
+  }
+  return `<header class="top"><h1>${title}</h1><button class="btn gold" data-act="new">+ Tâche</button></header>
+  <div class="acts" style="margin:0 0 14px">${[['day', 'Jour'], ['week', 'Semaine'], ['month', 'Mois']].map(([k, l]) => `<button class="btn${r === k ? ' on' : ''}" data-act="range" data-r="${k}">${l}</button>`).join('')}
+  <button class="btn" data-act="step" data-n="-1">‹</button><button class="btn" data-act="today">Aujourd’hui</button><button class="btn" data-act="step" data-n="1">›</button></div>
+  <section class="card">${body}</section>`;
+}
+
+function money() {
+  const sum = ty => S.money.filter(x => x.type === ty).reduce((s, x) => s + x.amount, 0), mo = today().slice(0, 7), g = +S.settings.goal;
+  const val = x => x.type === 'revenu' ? x.amount : x.type === 'dépense' ? -x.amount : 0;
+  const net = S.money.filter(x => x.date.startsWith(mo)).reduce((s, x) => s + val(x), 0);
+  const months = [...Array(6)].map((_, i) => { const d = new Date(); d.setDate(1); d.setMonth(d.getMonth() - 5 + i); const k = iso(d).slice(0, 7);
+    return [k.slice(5), S.money.filter(x => x.date.startsWith(k)).reduce((s, x) => s + val(x), 0)]; });
+  const mx = Math.max(1, ...months.map(m => Math.abs(m[1])));
+  return `<section class="card"><h2>Tableau financier</h2>
+  <p>Revenus ${eur(sum('revenu'))} · Dépenses ${eur(sum('dépense'))} · <b>Bénéfice net ${eur(sum('revenu') - sum('dépense'))}</b> · Épargne ${eur(sum('épargne'))}</p>
+  <p>Ce mois : net ${eur(net)}${g ? ` pour un objectif de ${eur(g)} (${Math.max(0, Math.round(net / g * 100))} %)` : ''}</p>
+  <div class="chart">${months.map(m => `<div><i class="${m[1] < 0 ? 'neg' : ''}" style="height:${Math.abs(m[1]) / mx * 100}%"></i><small>${m[0]}</small></div>`).join('')}</div>
+  <small>Net mensuel sur 6 mois. Ne saisissez que des revenus réellement encaissés : les gains de trading ne sont pas un revenu garanti.</small>
+  <form data-form="money" class="frm row2" style="margin-top:12px"><select name="type"><option>revenu</option><option>dépense</option><option>épargne</option></select>
+  <input name="label" placeholder="Libellé" required><input name="amount" type="number" min="0" step="any" placeholder="Montant" required>
+  <input name="date" type="date" value="${today()}" required><button class="btn gold">Ajouter</button></form>
+  ${S.money.slice().reverse().slice(0, 15).map(x => `<div class="ent"><div><b>${esc(x.label)}</b><small>${x.type} · ${x.date}</small></div><span>${eur(x.amount)}</span><button class="x" data-act="delmoney" data-id="${x.id}" title="Supprimer">✕</button></div>`).join('')}</section>`;
+}
+
+function pillarV(k) {
+  ui.pillar = k;
+  const ts = S.tasks.filter(t => t.pillar === k).sort(byTime), es = S.entries.filter(e => e.pillar === k).reverse();
+  return `<header class="top"><div><h1 style="color:${P[k].c}">${P[k].n}</h1><p class="mut">${pct(k)} % des tâches terminées</p></div><button class="btn gold" data-act="new" data-p="${k}">+ Tâche</button></header>
+  ${k === 'fin' ? money() : ''}
+  <section class="card"><h2>Nouvelle entrée</h2><form data-form="entry" class="frm"><select name="type">${TYPES[k].map(t => `<option>${t}</option>`).join('')}</select>
+  <input name="title" placeholder="Titre" required><textarea name="text" placeholder="Détails, notes, objectifs…"></textarea><button class="btn gold">Enregistrer</button></form></section>
+  <section class="card"><h2>Entrées (${es.length})</h2>${es.map(e => `<div class="ent"><div><b>${esc(e.title)}</b><small>${esc(e.type)} · ${fmtShort(e.date)}</small><p>${esc(e.text)}</p></div><button class="x" data-act="delent" data-id="${e.id}" title="Supprimer">✕</button></div>`).join('') || empty('Aucune entrée pour l’instant.')}</section>
+  <section class="card"><h2>Tâches (${ts.length})</h2>${ts.slice(-30).map(t => row(t, 1)).join('') || empty('Aucune tâche liée à ce pilier.')}</section>`;
+}
+
+function bilan() {
+  const s = stats(ui.period);
+  return `<header class="top"><h1>Bilan</h1></header>
+  <div class="acts" style="margin:0 0 14px">${[['day', 'Jour'], ['week', 'Semaine'], ['month', 'Mois']].map(([k, l]) => `<button class="btn${ui.period === k ? ' on' : ''}" data-act="period" data-r="${k}">${l}</button>`).join('')}</div>
+  <section class="card"><h2>Tâches</h2><p>${s.done.length} terminées sur ${s.ts.length} · ${s.ts.length - s.done.length} non atteintes (dont ${s.late} en retard) · discipline ${s.disc === null ? '—' : s.disc + ' %'}</p></section>
+  <section class="card"><h2>Temps consacré (tâches terminées)</h2>${timeBars(s.time)}</section>
+  <section class="card"><h2>Finances</h2><p>Revenus ${eur(s.rev)} · Dépenses ${eur(s.dep)} · Net ${eur(s.rev - s.dep)} · Épargne ${eur(s.epa)}</p></section>
+  <section class="card"><h2>Progression des piliers</h2>${Object.keys(P).map(k => `<div class="tm"><span>${P[k].n}</span><i class="bar" style="--c:${P[k].c}"><u style="width:${pct(k)}%"></u></i><em>${pct(k)}%</em></div>`).join('')}</section>
+  <section class="card"><h2>Écrire mon bilan</h2><form data-form="entry" class="frm"><input type="hidden" name="pillar" value="perso"><input type="hidden" name="type" value="Bilan">
+  <input name="title" value="Bilan ${{ day: 'du jour', week: 'de la semaine', month: 'du mois' }[ui.period]} · ${today()}" required><textarea name="text" placeholder="Ce qui a marché, ce qui a manqué, priorités à venir…"></textarea><button class="btn gold">Enregistrer dans Développement personnel</button></form></section>`;
+}
+
+function set() {
+  const s = S.settings;
+  return `<header class="top"><h1>Réglages</h1></header>
+  <section class="card"><form data-form="set" class="frm"><label>Prénom<input name="name" value="${esc(s.name)}"></label>
+  <label>Mode d’emploi du temps<select name="mode">${opts([['auto', 'Automatique (selon la date du stage)'], ['A', 'Mode A — avant le stage'], ['B', 'Mode B — pendant le stage']], s.mode)}</select></label>
+  <label>Début du stage<input type="date" name="stage" value="${s.stage}"></label>
+  <label>Objectif de bénéfice mensuel (FCFA)<input type="number" name="goal" min="0" value="${s.goal}"></label><button class="btn gold">Enregistrer</button></form></section>
+  <section class="card"><h2>Sauvegarde</h2><div class="acts"><button class="btn" data-act="export">Exporter en JSON</button>
+  <label class="btn">Importer un JSON<input type="file" id="imp" accept="application/json" hidden></label><button class="btn danger" data-act="reset">Réinitialiser</button></div></section>`;
+}
+
+function modal(t, p) {
+  const x = t || { id: '', date: ui.date, start: '09:00', end: '10:00', title: '', pillar: p || 'perso', status: 'todo', prio: 'normale' };
+  $('#modal').innerHTML = `<div class="mask" data-act="close"><form class="dlg frm" data-form="task"><h2>${t ? 'Modifier la' : 'Nouvelle'} tâche</h2>
+  <input type="hidden" name="id" value="${x.id}"><input name="title" placeholder="Titre" value="${esc(x.title)}" required>
+  <div class="row2"><input type="date" name="date" value="${x.date}" required><input type="time" name="start" value="${x.start}" required><input type="time" name="end" value="${x.end}" required></div>
+  <div class="row2"><select name="pillar">${opts(Object.keys(P).map(k => [k, P[k].n]), x.pillar)}</select><select name="status">${opts(Object.entries(STAT), x.status)}</select><select name="prio">${opts(PRIO.map(q => [q, q]), x.prio)}</select></div>
+  <div class="acts"><button class="btn gold">Enregistrer</button>${t ? `<button type="button" class="btn danger" data-act="deltask" data-id="${x.id}">Supprimer</button>` : ''}<button type="button" class="btn" data-act="close">Annuler</button></div></form></div>`;
+}
+
+function render() {
+  document.querySelectorAll('nav [data-v]').forEach(b => b.classList.toggle('on', b.dataset.v === ui.view));
+  $('#main').innerHTML = P[ui.view] ? pillarV(ui.view) : { dash, plan, bilan, set }[ui.view]();
+  tick();
+}
+
+/* ---------- Interactions ---------- */
+document.addEventListener('click', e => {
+  const el = e.target.closest('[data-act]'); if (!el) return;
+  const a = el.dataset.act, id = el.dataset.id, d = el.dataset;
+  if (a === 'close') { if (e.target === el) $('#modal').innerHTML = ''; return; }
+  if (a === 'nav') { ui.view = d.v; window.scrollTo(0, 0); }
+  if (a === 'new') { modal(null, d.p); return; }
+  if (a === 'edit') { modal(S.tasks.find(t => t.id === id)); return; }
+  if (a === 'cycle') { const t = S.tasks.find(x => x.id === id); t.status = { todo: 'doing', doing: 'done', done: 'todo' }[t.status]; save(); }
+  if (a === 'deltask') { if (!confirm('Supprimer cette tâche ?')) return; S.tasks = S.tasks.filter(t => t.id !== id); $('#modal').innerHTML = ''; save(); }
+  if (a === 'tpl') applyTpl(d.d);
+  if (a === 'range') ui.range = d.r;
+  if (a === 'period') ui.period = d.r;
+  if (a === 'today') ui.date = today();
+  if (a === 'goto') { ui.date = d.d; ui.range = 'day'; ui.view = 'plan'; }
+  if (a === 'step') { const n = +d.n, c = dt(ui.date); ui.date = ui.range === 'day' ? addDays(ui.date, n) : ui.range === 'week' ? addDays(ui.date, 7 * n) : iso(new Date(c.getFullYear(), c.getMonth() + n, 1)); }
+  if (a === 'delent') { S.entries = S.entries.filter(x => x.id !== id); save(); }
+  if (a === 'delmoney') { S.money = S.money.filter(x => x.id !== id); save(); }
+  if (a === 'export') {
+    const l = document.createElement('a'); l.href = URL.createObjectURL(new Blob([JSON.stringify(S, null, 2)], { type: 'application/json' }));
+    l.download = `perignon-${today()}.json`; l.click(); return;
+  }
+  if (a === 'reset') { if (!confirm('Effacer TOUTES les données ? Pensez à exporter une sauvegarde avant.')) return; S = { tasks: [], entries: [], money: [], settings: { ...S.settings } }; save(); toast('Données réinitialisées.'); }
+  render();
+});
+
+document.addEventListener('submit', e => {
+  e.preventDefault();
+  const f = e.target, d = Object.fromEntries(new FormData(f)), k = f.dataset.form;
+  if (k === 'task') {
+    if (d.end <= d.start) { toast('L’heure de fin doit suivre l’heure de début.'); return; }
+    if (d.id) Object.assign(S.tasks.find(t => t.id === d.id), d); else S.tasks.push({ ...d, id: uid() });
+    $('#modal').innerHTML = '';
+  }
+  if (k === 'entry') { S.entries.push({ id: uid(), pillar: d.pillar || ui.pillar, type: d.type, title: d.title, text: d.text || '', date: today() }); toast('Entrée enregistrée.'); }
+  if (k === 'money') S.money.push({ id: uid(), type: d.type, label: d.label, amount: Math.abs(+d.amount) || 0, date: d.date });
+  if (k === 'set') { Object.assign(S.settings, d, { goal: +d.goal || 0 }); toast('Réglages enregistrés.'); }
+  save(); render();
+});
+
+document.addEventListener('change', e => {
+  if (e.target.id !== 'imp' || !e.target.files[0]) return;
+  const r = new FileReader();
+  r.onload = () => {
+    try {
+      const j = JSON.parse(r.result); if (!Array.isArray(j.tasks)) throw 0;
+      if (!confirm('Remplacer les données actuelles par cette sauvegarde ?')) return;
+      S = { tasks: [], entries: [], money: [], ...j }; S.settings = { name: 'Pérignon', mode: 'auto', stage: '2027-01-04', goal: 0, ...j.settings };
+      save(); render(); toast('Sauvegarde importée.');
+    } catch (err) { toast('Fichier invalide : ce n’est pas une sauvegarde PÉRIGNON.'); }
+  };
+  r.readAsText(e.target.files[0]);
+});
+
+/* ---------- Horloge et notifications visuelles ---------- */
+const notified = new Set();
+function tick() {
+  const c = $('#clock'); if (c) c.textContent = nowHM();
+  const n = mins(nowHM()), t = today();
+  S.tasks.filter(x => x.date === t && x.status === 'todo' && !notified.has(x.id) && mins(x.start) - n >= 0 && mins(x.start) - n <= 10)
+    .forEach(x => { notified.add(x.id); toast(`À ${x.start} : ${x.title}`); });
+  $('#badge').textContent = S.tasks.filter(late).length || '';
+}
+render(); setInterval(tick, 30000);
+</script>
+</body>
+</html>
