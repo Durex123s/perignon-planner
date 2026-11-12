@@ -86,6 +86,8 @@ textarea{min-height:70px}
  .week{grid-template-columns:1fr}
  .tm{grid-template-columns:100px 1fr 54px}
 }
+.trw{display:grid;grid-template-columns:92px 92px minmax(0,1fr) 130px 28px;gap:6px;margin-bottom:6px}
+@media(max-width:860px){.trw{grid-template-columns:1fr 1fr}.trw input:nth-child(3){grid-column:1/-1}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
@@ -202,6 +204,9 @@ function tplB(wd) {
   return [...top, ['11:00', '12:00', 'Études GEII', 'ecole'], ['12:00', '13:00', 'Repas et repos', 'perso'], ['13:00', '14:00', 'Anglais et lecture', 'perso'],
     ['14:00', '15:00', 'Repos', 'perso'], ['15:00', '16:00', 'Déplacement', 'perso'], ['16:00', '22:00', stage, 'ecole']];
 }
+const defTpl = () => { const B = {}; for (let d = 0; d < 7; d++) B[d] = tplB(d); return { A: A.map(r => [...r]), B }; };
+const tpl = () => S.tpl || (S.tpl = defTpl());
+const curList = () => { const T = tpl(); return ui.tm === 'A' ? T.A : T.B[+ui.tm.slice(1)]; };
 function modeFor(d) {
   const m = S.settings.mode; if (m !== 'auto') return m;
   const e = dt(S.settings.stage); e.setMonth(e.getMonth() + 3);
@@ -209,7 +214,9 @@ function modeFor(d) {
 }
 function applyTpl(d) {
   const wd = dt(d).getDay(), m = modeFor(d); let n = 0;
-  (m === 'B' ? tplB(wd) : tplA(wd)).forEach(([s, e, t, p]) => {
+  const T = tpl(), items = m === 'B' ? T.B[wd] : T.A.map(r => r[2] === 'Projet complémentaire' ? [r[0], r[1], 'Projet du jour : ' + F[wd][1], F[wd][0]] : r);
+  items.forEach(([s, e, t, p]) => {
+    if (e <= s) return;
     if (!S.tasks.some(x => x.date === d && x.start === s && x.title === t)) {
       S.tasks.push({ id: uid(), date: d, start: s, end: e, title: t, pillar: p, status: 'todo', prio: 'normale' }); n++;
     }
@@ -218,7 +225,7 @@ function applyTpl(d) {
 }
 
 /* ---------- Vues ---------- */
-const ui = { view: 'dash', date: today(), range: 'day', pillar: null, period: 'week' };
+const ui = { view: 'dash', date: today(), range: 'day', pillar: null, period: 'week', tm: 'A' };
 
 function row(t, wd) {
   return `<div class="task${late(t) ? ' late' : ''}${t.status === 'done' ? ' done' : ''}" style="--c:${P[t.pillar].c}">
@@ -313,7 +320,15 @@ function set() {
   <label>Début du stage<input type="date" name="stage" value="${s.stage}"></label>
   <label>Objectif de bénéfice mensuel (FCFA)<input type="number" name="goal" min="0" value="${s.goal}"></label><button class="btn gold">Enregistrer</button></form></section>
   <section class="card"><h2>Sauvegarde</h2><div class="acts"><button class="btn" data-act="export">Exporter en JSON</button>
-  <label class="btn">Importer un JSON<input type="file" id="imp" accept="application/json" hidden></label><button class="btn danger" data-act="reset">Réinitialiser</button></div></section>`;
+  <label class="btn">Importer un JSON<input type="file" id="imp" accept="application/json" hidden></label><button class="btn danger" data-act="reset">Réinitialiser</button></div></section>` + tplEd();
+}
+
+function tplEd() {
+  const k = ui.tm, list = curList(), tabs = [['A', 'Mode A']].concat(DAYS.map((n, i) => ['B' + i, 'B · ' + n.slice(0, 3)]));
+  return `<section class="card"><h2>Modèles d’emploi du temps</h2><div class="acts" style="margin:0 0 10px">${tabs.map(([v, l]) => `<button class="btn${k === v ? ' on' : ''}" data-act="tm" data-v="${v}">${l}</button>`).join('')}</div>
+  ${list.map((r, i) => `<div class="trw"><input type="time" value="${r[0]}" data-tr="${i}" data-f="0"><input type="time" value="${r[1]}" data-tr="${i}" data-f="1"><input value="${esc(r[2])}" data-tr="${i}" data-f="2" placeholder="Activité"><select data-tr="${i}" data-f="3">${opts(Object.keys(P).map(p => [p, P[p].n]), r[3])}</select><button class="x" data-act="trdel" data-i="${i}" title="Supprimer la ligne">✕</button></div>`).join('') || empty('Modèle vide.')}
+  <div class="acts"><button class="btn" data-act="tradd">+ Ajouter une ligne</button><button class="btn danger" data-act="trreset">Rétablir par défaut</button></div>
+  <small>Les changements s’appliquent aux prochaines générations ; les tâches déjà créées ne bougent pas. En mode A, la ligne « Projet complémentaire » prend le thème du jour.</small></section>`;
 }
 
 function modal(t, p) {
@@ -349,6 +364,13 @@ document.addEventListener('click', e => {
   if (a === 'step') { const n = +d.n, c = dt(ui.date); ui.date = ui.range === 'day' ? addDays(ui.date, n) : ui.range === 'week' ? addDays(ui.date, 7 * n) : iso(new Date(c.getFullYear(), c.getMonth() + n, 1)); }
   if (a === 'delent') { S.entries = S.entries.filter(x => x.id !== id); save(); }
   if (a === 'delmoney') { S.money = S.money.filter(x => x.id !== id); save(); }
+  if (a === 'tm') ui.tm = d.v;
+  if (a === 'trdel') { curList().splice(+d.i, 1); save(); }
+  if (a === 'tradd') { curList().push(['09:00', '10:00', 'Nouvelle activité', 'perso']); save(); }
+  if (a === 'trreset') {
+    if (!confirm('Rétablir ce modèle par défaut ?')) return;
+    const D = defTpl(), T = tpl(); if (ui.tm === 'A') T.A = D.A; else T.B[+ui.tm.slice(1)] = D.B[+ui.tm.slice(1)]; save();
+  }
   if (a === 'export') {
     const l = document.createElement('a'); l.href = URL.createObjectURL(new Blob([JSON.stringify(S, null, 2)], { type: 'application/json' }));
     l.download = `perignon-${today()}.json`; l.click(); return;
@@ -383,6 +405,13 @@ document.addEventListener('change', e => {
     } catch (err) { toast('Fichier invalide : ce n’est pas une sauvegarde PÉRIGNON.'); }
   };
   r.readAsText(e.target.files[0]);
+});
+
+document.addEventListener('change', e => {
+  const t = e.target; if (t.dataset.tr === undefined) return;
+  const r = curList()[+t.dataset.tr], f = +t.dataset.f; if (!r || (f < 2 && !t.value)) return;
+  r[f] = t.value; save();
+  if (r[1] <= r[0]) toast('L’heure de fin doit suivre l’heure de début : cette ligne sera ignorée.');
 });
 
 /* ---------- Horloge et notifications visuelles ---------- */
